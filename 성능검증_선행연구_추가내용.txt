@@ -1,0 +1,38 @@
+1. 기능명세서 (docx) 향후 발전방향에 추가하면 될듯?
+· 모델 고도화: 한국어 법령 코퍼스로 sLLM 도메인 파인튜닝, 정답 라벨링된 광고 평가셋 기반 정확도 검증·반복 개선
+  - 파일럿 테스트(15건) 결과, 도메인 특화 sLLM이 범용 LLM 대비 정확도 약 7%p 향상, 응답시간 42% 단축, 토큰 비용 52% 절감 확인
+  - 선행 연구에 따르면 법률/금융 도메인 특화 파인튜닝 시 10~50%p 이상의 정확도 향상 보고(LawInstruct, 2024; Baichuan4-Finance, 2025)
+  - JB 내부 심의 데이터 기반 추가 학습 시 실무 적합성 및 성능 향상 기대
+
+2. 기능명세서 (docx) - 부록 참고문현 추가
+
+[성능 검증 관련 선행연구]
+· Guha et al. (2024). "LawInstruct: A Resource for Studying Language Model Adaptation to the Legal Domain", arXiv:2404.02127
+  - 법률 도메인 파인튜닝으로 LegalBench 정확도 16~55% 향상
+· Zhang et al. (2025). "BizFinBench: A Business-Driven Real-World Financial Benchmark for Evaluating LLMs", arXiv:2505.19457
+  - Baichuan4-Finance, 은행/보험/증권 자격시험 95% 이상 정확도 달성
+· 지능정보연구 (2024). "도메인 특화 LLM: Mistral 7B를 활용한 금융 업무분야 파인튜닝 및 활용 방법"
+  - 금융 도메인 SLM 파인튜닝 방법론 및 규정 준수 고려사항 제시
+
+
+3. 제안서 (pptx)
+[슬라이드 제목: 성능 검증 및 기대효과]
+
+▶ 파일럿 테스트 결과 (15건)
+  • 정확도: +7%p 향상 (범용 LLM 대비)
+  • 응답시간: 42% 단축
+  • 토큰 비용: 52% 절감
+
+▶ 선행연구 근거
+  • 법률 도메인 파인튜닝 → 정확도 16~55% 향상 (LawInstruct, 2024)
+  • 금융 특화 LLM → 자격시험 95%+ 정확도 (Baichuan4-Finance, 2025)
+
+▶ 향후 기대
+  • JB 내부 심의 데이터 학습 시 추가 성능 향상 예상
+
+
+참고 링크
+· LawInstruct: https://arxiv.org/pdf/2404.02127
+· BizFinBench: https://arxiv.org/pdf/2505.19457
+· 금융 특화 LLM (KCI): https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003066124
+· Legal Document Correction: https://www.sciencedirect.com/science/article/abs/pii/S0306457326000944
