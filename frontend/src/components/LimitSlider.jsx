@@ -3,14 +3,16 @@ import { Info } from 'lucide-react';
 
 function LimitSlider({
   settlementAmount = 3000000,
-  refundRate = 0.05,
-  buffer = 0.03,
+  haircutRate = 0.08, // receivable valuation discount only (refund/cancel tail) — no risk buffer, no interest
+  feeAnnualRate = 0.072, // period fee (interest), annualized — separated from haircut, under legal cap
+  periodDays = 18,
   baseRecoveryRate = 98.5,
   onLimitChange
 }) {
-  const maxLimit = Math.floor(settlementAmount * (1 - refundRate - buffer));
+  const maxLimit = Math.floor(settlementAmount * (1 - haircutRate));
   const [selectedLimit, setSelectedLimit] = useState(maxLimit);
   const [recoveryRate, setRecoveryRate] = useState(baseRecoveryRate);
+  const expectedFee = Math.round(selectedLimit * feeAnnualRate * periodDays / 365);
 
   useEffect(() => {
     const ratio = selectedLimit / maxLimit;
@@ -24,9 +26,9 @@ function LimitSlider({
   };
 
   const getSignalStatus = () => {
-    if (recoveryRate >= 95) return { label: '승인 권장', class: 'signal-approve' };
-    if (recoveryRate >= 80) return { label: '검토 필요', class: 'signal-review' };
-    return { label: '승인 미달', class: 'signal-reject' };
+    if (recoveryRate >= 95) return { label: '자동집행 구간', class: 'signal-approve' };
+    if (recoveryRate >= 80) return { label: '은행원 검토', class: 'signal-review' };
+    return { label: '보류 권고', class: 'signal-reject' };
   };
 
   const signal = getSignalStatus();
@@ -46,16 +48,16 @@ function LimitSlider({
           <span>{formatMoney(settlementAmount)}원</span>
         </div>
         <div className="calc-row">
-          <span>환불률 ({(refundRate * 100).toFixed(0)}%)</span>
-          <span>-{formatMoney(settlementAmount * refundRate)}원</span>
-        </div>
-        <div className="calc-row">
-          <span>안전버퍼 ({(buffer * 100).toFixed(0)}%)</span>
-          <span>-{formatMoney(settlementAmount * buffer)}원</span>
+          <span>haircut — 채권평가감 · 환불취소율 ({(haircutRate * 100).toFixed(0)}%)</span>
+          <span>-{formatMoney(settlementAmount * haircutRate)}원</span>
         </div>
         <div className="calc-row total">
           <span>최대 선지급 가능</span>
           <span>{formatMoney(maxLimit)}원</span>
+        </div>
+        <div className="calc-row fee-note">
+          <span>기간 수수료(이자) — haircut과 분리 · 연 {(feeAnnualRate * 100).toFixed(1)}% ({periodDays}일)</span>
+          <span>약 {formatMoney(expectedFee)}원 별도</span>
         </div>
       </div>
 

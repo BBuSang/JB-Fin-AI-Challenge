@@ -5,10 +5,10 @@ function SignalCard({ status, recoveryRate, limit, onAction }) {
     if (status === 'approve' || recoveryRate >= 95) {
       return {
         icon: CheckCircle,
-        title: '승인 권장',
-        subtitle: '자동 승인 기준 충족',
+        title: '자동승인 대상',
+        subtitle: '스크리닝 통과 · 위험경보 없음',
         class: 'signal-approve',
-        description: '회수확률이 95% 이상으로 자동 승인 정책에 부합합니다.',
+        description: '네거티브 스크리닝(폐업·압류·중복양도) 통과, 위험경보 없음 — 사전승인 정책·한도 내 자동 집행 대상입니다.',
         actions: [
           { label: '승인 실행', primary: true, action: 'approve' },
           { label: '상세 검토', primary: false, action: 'review' },
@@ -19,9 +19,9 @@ function SignalCard({ status, recoveryRate, limit, onAction }) {
       return {
         icon: AlertCircle,
         title: '검토 필요',
-        subtitle: '은행원 판단 요청',
+        subtitle: '위험 플래그 — 은행원 판단',
         class: 'signal-review',
-        description: '회수확률이 80~95% 구간입니다. 추가 검토 후 결정해주세요.',
+        description: '위험 신호가 감지되어 은행원 검토로 라우팅되었습니다. SHAP 근거 확인 후 결정해주세요.',
         actions: [
           { label: '승인', primary: true, action: 'approve' },
           { label: '보류', primary: false, action: 'hold' },
@@ -31,10 +31,10 @@ function SignalCard({ status, recoveryRate, limit, onAction }) {
     }
     return {
       icon: XCircle,
-      title: '승인 미달',
-      subtitle: '대안 연결 권장',
+      title: '결격 — 선지급 보류',
+      subtitle: '낙인 없는 대안 연결',
       class: 'signal-reject',
-      description: '현재 조건으로는 승인이 어렵습니다. 대안을 안내해드립니다.',
+      description: '결격 사유 또는 고위험으로 이번 선지급은 보류 권고 — 정책자금·연착륙 대안을 안내해드립니다.',
       actions: [
         { label: '대안 보기', primary: true, action: 'alternatives' },
         { label: '재검토 요청', primary: false, action: 'retry' },
@@ -61,11 +61,11 @@ function SignalCard({ status, recoveryRate, limit, onAction }) {
 
       <div className="signal-stats">
         <div className="signal-stat">
-          <span className="stat-label">회수확률</span>
+          <span className="stat-label">회수확률 (위험 참고)</span>
           <span className="stat-value">{recoveryRate}%</span>
         </div>
         <div className="signal-stat">
-          <span className="stat-label">추천한도</span>
+          <span className="stat-label">선지급 한도 (기계 산식)</span>
           <span className="stat-value">{formatMoney(limit)}원</span>
         </div>
       </div>
