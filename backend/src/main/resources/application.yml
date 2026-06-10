@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: naeilbank-backend
+
+ml:
+  base-url: http://localhost:8000  # FastAPI 추론 서버 (미가동 시 컨트롤러 fallback)

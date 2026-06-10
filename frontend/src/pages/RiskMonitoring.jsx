@@ -1,72 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertTriangle, TrendingDown, Clock, Shield, ChevronRight } from 'lucide-react';
+import { api } from '../api';
 
 function RiskMonitoring() {
   const [selectedRisk, setSelectedRisk] = useState('all');
+  const [data, setData] = useState({ summary: [], alerts: [] });
+
+  useEffect(() => {
+    api.risks(selectedRisk).then(setData).catch(console.error);
+  }, [selectedRisk]);
+
+  const summaryById = Object.fromEntries((data.summary || []).map((s) => [s.id, s.count]));
 
   const riskCategories = [
-    { id: 'all', label: '전체', count: 12 },
-    { id: 'high', label: '고위험', count: 3 },
-    { id: 'medium', label: '주의', count: 5 },
-    { id: 'watch', label: '관찰', count: 4 },
-  ];
-
-  const riskAlerts = [
-    {
-      id: 1,
-      level: 'high',
-      customerName: '이철수',
-      businessName: '행복카페',
-      indicator: '매출 급감',
-      change: '-45%',
-      detail: '최근 2주간 매출이 전월 대비 45% 감소',
-      detected: '2시간 전',
-      suggestion: '정책자금 연결 권장',
-    },
-    {
-      id: 2,
-      level: 'high',
-      customerName: '박진수',
-      businessName: '맛있는분식',
-      indicator: '연체 예상',
-      change: 'D-7',
-      detail: '현금흐름 분석 결과 7일 후 상환 어려움 예상',
-      detected: '3시간 전',
-      suggestion: '상환 유예 상담 권장',
-    },
-    {
-      id: 3,
-      level: 'medium',
-      customerName: '최영희',
-      businessName: '꽃집 봄',
-      indicator: '결제 지연',
-      change: '+3일',
-      detail: '거래처 결제가 평균 대비 3일 지연',
-      detected: '5시간 전',
-      suggestion: '모니터링 지속',
-    },
-    {
-      id: 4,
-      level: 'medium',
-      customerName: '김상호',
-      businessName: '충장철물',
-      indicator: '시즌 영향',
-      change: '-20%',
-      detail: '비수기 진입으로 매출 하락 예상',
-      detected: '1일 전',
-      suggestion: '단기 운영자금 검토',
-    },
-    {
-      id: 5,
-      level: 'watch',
-      customerName: '이미경',
-      businessName: '미경미용실',
-      indicator: '상권 변화',
-      change: '관찰',
-      detail: '인근 대형마트 오픈으로 유동인구 변화 감지',
-      detected: '2일 전',
-      suggestion: '추이 관찰',
-    },
+    { id: 'all', label: '전체', count: summaryById.all ?? 0 },
+    { id: 'high', label: '고위험', count: summaryById.high ?? 0 },
+    { id: 'medium', label: '주의', count: summaryById.medium ?? 0 },
+    { id: 'watch', label: '관찰', count: summaryById.watch ?? 0 },
   ];
 
   const getLevelStyle = (level) => {
@@ -87,10 +37,6 @@ function RiskMonitoring() {
     }
   };
 
-  const filteredAlerts = selectedRisk === 'all'
-    ? riskAlerts
-    : riskAlerts.filter(a => a.level === selectedRisk);
-
   return (
     <section className="content-body">
       <div className="page-title">
@@ -102,7 +48,7 @@ function RiskMonitoring() {
         <div className="card risk-summary-card high">
           <AlertTriangle size={24} />
           <div className="risk-summary-content">
-            <span className="risk-count">3</span>
+            <span className="risk-count">{summaryById.high ?? 0}</span>
             <span className="risk-label">고위험</span>
           </div>
           <span className="risk-desc">즉시 조치 필요</span>
@@ -110,7 +56,7 @@ function RiskMonitoring() {
         <div className="card risk-summary-card medium">
           <TrendingDown size={24} />
           <div className="risk-summary-content">
-            <span className="risk-count">5</span>
+            <span className="risk-count">{summaryById.medium ?? 0}</span>
             <span className="risk-label">주의</span>
           </div>
           <span className="risk-desc">면밀한 검토 필요</span>
@@ -118,7 +64,7 @@ function RiskMonitoring() {
         <div className="card risk-summary-card watch">
           <Clock size={24} />
           <div className="risk-summary-content">
-            <span className="risk-count">4</span>
+            <span className="risk-count">{summaryById.watch ?? 0}</span>
             <span className="risk-label">관찰</span>
           </div>
           <span className="risk-desc">추이 모니터링</span>
@@ -126,7 +72,7 @@ function RiskMonitoring() {
         <div className="card risk-summary-card safe">
           <Shield size={24} />
           <div className="risk-summary-content">
-            <span className="risk-count">142</span>
+            <span className="risk-count">{summaryById.safe ?? 0}</span>
             <span className="risk-label">정상</span>
           </div>
           <span className="risk-desc">이상 없음</span>
@@ -147,7 +93,7 @@ function RiskMonitoring() {
 
       <div className="card">
         <div className="risk-alert-list">
-          {filteredAlerts.map((alert) => (
+          {(data.alerts || []).map((alert) => (
             <div key={alert.id} className={`risk-alert-item ${getLevelStyle(alert.level)}`}>
               <div className="risk-level-badge">
                 {getLevelLabel(alert.level)}
